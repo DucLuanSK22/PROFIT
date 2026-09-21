@@ -1,4 +1,4 @@
-import { UserRole, AccountKey, AuthState, MultiAccountState } from '../types/stock';
+import { UserRole, AccountKey, AuthState, MultiAccountState, AccountData } from '../types/stock';
 import { ADMIN_PIN } from './sampleDataGenerator';
 
 const AUTH_KEY = 'INVESTMENT_DASHBOARD_AUTH_V1';
@@ -72,6 +72,59 @@ export function verifyLogin(
   }
 
   return { success: false, error: `Mã PIN ${acc.name} không đúng (Mặc định: ${acc.pin})` };
+}
+
+export function registerNewAccount(
+  params: {
+    ownerName: string;
+    accountName: string;
+    broker: string;
+    accountNumber: string;
+    pin: string;
+  },
+  state: MultiAccountState,
+  onStateUpdate: (newState: MultiAccountState) => void
+): { success: boolean; authState?: AuthState; error?: string } {
+  const { ownerName, accountName, broker, accountNumber, pin } = params;
+
+  if (!ownerName.trim()) return { success: false, error: 'Vui lòng nhập Họ và Tên' };
+  if (!accountName.trim()) return { success: false, error: 'Vui lòng nhập Tên Tài Khoản / Biệt danh' };
+  if (!pin.trim()) return { success: false, error: 'Vui lòng tạo mã PIN / Mật khẩu' };
+
+  const newKey = `ACC_${Date.now()}`;
+  const formattedAccNum = `${accountNumber.trim() || 'N/A'} (${broker.trim() || 'CK'})`;
+
+  const newAccData: AccountData = {
+    key: newKey,
+    name: accountName.trim(),
+    ownerName: ownerName.trim(),
+    accountNumber: formattedAccNum,
+    broker: broker.trim() || 'Công ty CK',
+    pin: pin.trim(),
+    trades: [],
+    cashTxns: [],
+    holdings: [],
+    fileInfos: []
+  };
+
+  const newState: MultiAccountState = {
+    accounts: {
+      ...state.accounts,
+      [newKey]: newAccData
+    }
+  };
+
+  onStateUpdate(newState);
+
+  const auth: AuthState = {
+    isAuthenticated: true,
+    role: newKey,
+    activeAccountKey: newKey,
+    userName: newAccData.name
+  };
+
+  saveAuthState(auth);
+  return { success: true, authState: auth };
 }
 
 export function logoutUser(): AuthState {

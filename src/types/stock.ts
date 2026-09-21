@@ -1,7 +1,7 @@
 export type AssetType = 'STOCK' | 'WARRANT';
 
-export type UserRole = 'ADMIN' | 'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3';
-export type AccountKey = 'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3';
+export type UserRole = 'ADMIN' | string;
+export type AccountKey = string;
 export type ActiveModule = 'REALIZED_PNL' | 'CASHFLOW' | 'HOLDINGS' | 'GROUP_SUMMARY';
 
 export interface AuthState {

@@ -221,6 +221,7 @@ export const App: React.FC = () => {
         <LoginModal
           state={multiAccountState}
           onLoginSuccess={handleLoginSuccess}
+          onStateUpdate={updateMultiAccountState}
         />
       )}
 
