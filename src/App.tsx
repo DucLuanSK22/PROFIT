@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Component, ErrorInfo, ReactNode } from 'react';
 import { AuthState, UserRole, AccountKey, ActiveModule, MultiAccountState, CashTransaction, OpenPosition, AccountData } from './types/stock';
 import { loadAuthState, saveAuthState, logoutUser } from './utils/authManager';
-import { loadMultiAccountState, saveMultiAccountState } from './utils/storageManager';
+import { loadMultiAccountState, saveMultiAccountState, resetToSampleData } from './utils/storageManager';
 import { Header } from './components/Header';
 import { LoginModal } from './components/LoginModal';
 import { Dropzone } from './components/Dropzone';
@@ -13,10 +13,67 @@ import { CashflowModule } from './components/CashflowModule';
 import { HoldingsModule } from './components/HoldingsModule';
 import { GroupComparisonModule } from './components/GroupComparisonModule';
 import { parseExcelFile, mergeTrades, calculateSummaryStats, getTickerSummaries, parseHtmlXls, parseWorkbookXlsx, ParseFileResult } from './utils/excelParser';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, RotateCcw, AlertTriangle } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
-export const App: React.FC = () => {
+interface ErrorBoundaryProps {
+  children: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error?: Error;
+}
+
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  public state: ErrorBoundaryState = {
+    hasError: false
+  };
+
+  public static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Uncaught error:', error, errorInfo);
+  }
+
+  private handleResetData = () => {
+    localStorage.clear();
+    window.location.reload();
+  };
+
+  public render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-6">
+          <div className="max-w-md w-full glass-panel bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-6 text-center shadow-2xl">
+            <div className="w-16 h-16 rounded-2xl bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-8 h-8" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-xl font-extrabold text-white">Đã Xảy Ra Lỗi Hiển Thị</h2>
+              <p className="text-xs text-slate-400">
+                Ứng dụng gặp sự cố đọc dữ liệu đã lưu. Bấm nút bên dưới để khôi phục dữ liệu ban đầu.
+              </p>
+            </div>
+            <button
+              onClick={this.handleResetData}
+              className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition-all shadow-lg shadow-blue-600/20 cursor-pointer flex items-center justify-center space-x-2"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Khôi Phục Dữ Liệu Ban Đầu</span>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+const AppContent: React.FC = () => {
   // Auth state
   const [authState, setAuthState] = useState<AuthState>(() => loadAuthState());
 
@@ -47,8 +104,23 @@ export const App: React.FC = () => {
     setAuthState(freshAuth);
   };
 
-  const activeAccountKey = authState.activeAccountKey || 'ACCOUNT_1';
-  const currentAccountData = multiAccountState.accounts[activeAccountKey] || multiAccountState.accounts.ACCOUNT_1;
+  const activeAccountKey = authState?.activeAccountKey || 'ACCOUNT_1';
+  const currentAccountData = (multiAccountState?.accounts && multiAccountState.accounts[activeAccountKey])
+    ? multiAccountState.accounts[activeAccountKey]
+    : (multiAccountState?.accounts && multiAccountState.accounts.ACCOUNT_1)
+    ? multiAccountState.accounts.ACCOUNT_1
+    : {
+        key: 'ACCOUNT_1',
+        name: 'Tài Khoản 1 (Của Tôi)',
+        ownerName: 'Nguyễn Văn A',
+        accountNumber: 'LL22366 (VPS)',
+        broker: 'VPS',
+        pin: '1234',
+        trades: [],
+        cashTxns: [],
+        holdings: [],
+        fileInfos: []
+      };
 
   // File Upload Logic: Parses dropped files and merges into current active account
   const handleFilesDropped = async (files: File[]) => {
@@ -126,7 +198,8 @@ export const App: React.FC = () => {
       const results: ParseFileResult[] = [];
       for (const fileName of sampleFilesList) {
         try {
-          const res = await fetch(`/${encodeURIComponent(fileName)}`);
+          const baseUrl = (import.meta as any).env?.BASE_URL || '/';
+          const res = await fetch(`${baseUrl}${encodeURIComponent(fileName)}`);
           if (res.ok) {
             const htmlText = await res.text();
             const parseRes = parseHtmlXls(htmlText, fileName);
@@ -217,7 +290,7 @@ export const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col selection:bg-blue-500 selection:text-white w-full">
       {/* Login Modal Overlay if not authenticated */}
-      {!authState.isAuthenticated && (
+      {!authState?.isAuthenticated && (
         <LoginModal
           state={multiAccountState}
           onLoginSuccess={handleLoginSuccess}
@@ -242,7 +315,7 @@ export const App: React.FC = () => {
       <main className="flex-1 w-full px-4 sm:px-6 lg:px-10 py-8 space-y-8">
         
         {/* VIEW 1: ADMIN GROUP SUMMARY MODULE */}
-        {activeModule === 'GROUP_SUMMARY' && authState.role === 'ADMIN' && (
+        {activeModule === 'GROUP_SUMMARY' && authState?.role === 'ADMIN' && (
           <GroupComparisonModule state={multiAccountState} />
         )}
 
@@ -314,5 +387,11 @@ export const App: React.FC = () => {
     </div>
   );
 };
+
+export const App: React.FC = () => (
+  <ErrorBoundary>
+    <AppContent />
+  </ErrorBoundary>
+);
 
 export default App;

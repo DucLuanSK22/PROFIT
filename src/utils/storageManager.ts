@@ -9,6 +9,23 @@ export function loadMultiAccountState(): MultiAccountState {
     if (!saved) return getInitialState();
     const parsed = JSON.parse(saved);
     if (parsed && parsed.accounts && parsed.accounts.ACCOUNT_1) {
+      // Ensure all required fields exist for each account to prevent runtime crashes
+      const initial = getInitialState();
+      Object.keys(parsed.accounts).forEach(k => {
+        const acc = parsed.accounts[k];
+        if (acc) {
+          acc.trades = Array.isArray(acc.trades) ? acc.trades : [];
+          acc.cashTxns = Array.isArray(acc.cashTxns) ? acc.cashTxns : [];
+          acc.holdings = Array.isArray(acc.holdings) ? acc.holdings : [];
+          acc.fileInfos = Array.isArray(acc.fileInfos) ? acc.fileInfos : [];
+        }
+      });
+      // Ensure default accounts exist
+      ['ACCOUNT_1', 'ACCOUNT_2', 'ACCOUNT_3'].forEach(k => {
+        if (!parsed.accounts[k]) {
+          parsed.accounts[k] = initial.accounts[k as AccountKey];
+        }
+      });
       return parsed;
     }
   } catch (err) {
