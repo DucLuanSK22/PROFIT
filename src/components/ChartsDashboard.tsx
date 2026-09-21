@@ -33,11 +33,13 @@ export const ChartsDashboard: React.FC<ChartsDashboardProps> = ({
     });
   }, [trades]);
 
-  // 2. Prepare Top 7 Winners and Top 7 Losers
+  // 2. Prepare Top Tickers Data: Strictly sorted from highest profit to biggest loss (descending)
   const topTickersData = useMemo(() => {
-    const winners = tickerSummaries.filter(t => t.netProfit > 0).slice(0, 6);
-    const losers = tickerSummaries.filter(t => t.netProfit < 0).slice(-6).reverse();
-    return [...winners, ...losers];
+    const sorted = [...tickerSummaries].sort((a, b) => b.netProfit - a.netProfit);
+    if (sorted.length <= 12) return sorted;
+    const winners = sorted.filter(t => t.netProfit > 0).slice(0, 6);
+    const losers = sorted.filter(t => t.netProfit < 0).slice(-6);
+    return [...winners, ...losers].sort((a, b) => b.netProfit - a.netProfit);
   }, [tickerSummaries]);
 
   // 3. Prepare Monthly Breakdown Data
