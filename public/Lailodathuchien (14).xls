@@ -1,0 +1,115 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Sheet0</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet><x:ExcelWorksheet><x:Name>Sheet1</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet><x:ExcelWorksheet><x:Name>Sheet2</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table border='0' style='undefined'><tr style='undefined'><td align='undefined'  colspan='10' />
+                <span class="bold"><b>Công ty cổ phần chứng khoán VPS (VPS)</b></span>
+            </td></tr><tr style='undefined'><td align='undefined'  colspan='10' />
+                Dịch vụ giao dịch trực tuyến</td></tr><tr style='undefined'><td align='center'  colspan='15' />
+                <b>LÃI LỖ ĐÃ THỰC HIỆN</b>
+            </td></tr><tr style='undefined'><td align='center'  colspan='15' />
+                <script type="jsv#5430^"></script><script type="jsv/5430^"></script>
+                <script type="jsv#5431^"></script><script type="jsv#686_"></script>
+                <span class="print_date">
+                    Từ ngày
+                    <span id="lblFromDate">01/09/2026</span>&nbsp;
+                    Đến ngày
+                    <span id="lblToDate">16/09/2026</span>
+                </span>
+                <script type="jsv/686_"></script><script type="jsv/5431^"></script>
+            </td></tr><tr style='undefined'><td align='center'  colspan='15' />
+        <span class="print_date">
+            Mã  
+        </span>
+    </td></tr><tr style='undefined'><td align='center'  colspan='20' />
+                <hr align="center" width="100%" style="height: 1px; border: solid 1px #333333"></td></tr></table><table border='0' style='undefined'><tr style='undefined'><td align='undefined' />
+                Họ tên</td><td align='undefined' />
+                <span id="lblName"><b>Nguyễn Đức Luân</b></span>
+            </td></tr><tr style='undefined'><td align='undefined' />
+                Tài khoản</td><td align='undefined' />
+                <span id="lblAccountID"><b>'LL22366</b></span>
+            </td></tr></table><table border='1' style='width: 100%;'><tr style='undefined'><td align='center' /><span class="bold"><b>Ngày</b></span></td><td align='center' /><span class="bold"><b>Mã chứng khoán</b></span></td><td align='center' /><span class="bold"><b>Khối lượng bán</b></span></td><td align='center' /><span class="bold"><b>Giá bán</b></span></td><td align='center' /><span class="bold"><b>Phí + Thuế bán</b></span></td><td align='center' /><span class="bold"><b>Giá trị bán</b></span></td><td align='center' /><span class="bold"><b>Giá vốn</b></span></td><td align='center' /><span class="bold"><b>Giá trị vốn</b></span></td><td align='center' /><span class="bold"><b>Lãi/Lỗ</b></span></td><td align='center' /><span class="bold"><b>%Lãi/Lỗ</b></span></td></tr><tr style='undefined'><td align='undefined'  colspan='2' /></td><td align='undefined' /></td><td align='undefined' /></td><td align='undefined' /></td><td align='undefined' />
+                <span class="bold"><b><i><script type="jsv#5433^"></script>41,271,563<script type="jsv/5433^"></script></i></b></span>
+            </td><td align='undefined' /></td><td align='undefined' />
+                <span class="bold"><b><i><script type="jsv#5434^"></script>41,012,700<script type="jsv/5434^"></script></i></b></span>
+            </td><td align='undefined' />
+                <span class="bold"><b><i><script type="jsv#5435^"></script>258,863<script type="jsv/5435^"></script></i></b></span>
+            </td><td align='undefined' />
+                <span class="bold"><b><i><script type="jsv#5436^"></script>0.63<script type="jsv/5436^"></script>%</i></b></span>
+            </td></tr><tr style='undefined'><td align='undefined' />
+                <script type="jsv#5438^"></script>09/09/2026 14:43:02<script type="jsv/5438^"></script>
+            </td><td align='center' />
+                <span class="text_c"><script type="jsv#5439^"></script>MSR<script type="jsv/5439^"></script></span>
+            </td><td align='center' />
+                <span class="text_c"><script type="jsv#5440^"></script>200<script type="jsv/5440^"></script></span>
+            </td><td align='center' />
+                <script type="jsv#5441^"></script>48,000<script type="jsv/5441^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5442^"></script>24,000<script type="jsv/5442^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5443^"></script>9,576,000<script type="jsv/5443^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5444^"></script>39,659<script type="jsv/5444^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5445^"></script>7,931,800<script type="jsv/5445^"></script>
+            </td><td align='undefined' />
+                <span class="bold"><b><script type="jsv#5446^"></script>1,644,200<script type="jsv/5446^"></script></b></span>
+            </td><td align='undefined' />
+                <span class="bold"><b><script type="jsv#5447^"></script>20.73<script type="jsv/5447^"></script>%</b></span>
+            </td></tr><tr style='undefined'><td align='undefined' />
+                <script type="jsv#5448^"></script>09/09/2026 14:45:00<script type="jsv/5448^"></script>
+            </td><td align='center' />
+                <span class="text_c"><script type="jsv#5449^"></script>GAS<script type="jsv/5449^"></script></span>
+            </td><td align='center' />
+                <span class="text_c"><script type="jsv#5450^"></script>100<script type="jsv/5450^"></script></span>
+            </td><td align='center' />
+                <script type="jsv#5451^"></script>85,700<script type="jsv/5451^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5452^"></script>21,425<script type="jsv/5452^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5453^"></script>8,548,575<script type="jsv/5453^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5454^"></script>87,731<script type="jsv/5454^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5455^"></script>8,773,100<script type="jsv/5455^"></script>
+            </td><td align='undefined' />
+                <span class="bold"><b><script type="jsv#5456^"></script>-224,525<script type="jsv/5456^"></script></b></span>
+            </td><td align='undefined' />
+                <span class="bold"><b><script type="jsv#5457^"></script>-2.56<script type="jsv/5457^"></script>%</b></span>
+            </td></tr><tr style='undefined'><td align='undefined' />
+                <script type="jsv#5458^"></script>16/09/2026 10:32:26<script type="jsv/5458^"></script>
+            </td><td align='center' />
+                <span class="text_c"><script type="jsv#5459^"></script>PLX<script type="jsv/5459^"></script></span>
+            </td><td align='center' />
+                <span class="text_c"><script type="jsv#5460^"></script>300<script type="jsv/5460^"></script></span>
+            </td><td align='center' />
+                <script type="jsv#5461^"></script>38,800<script type="jsv/5461^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5462^"></script>29,100<script type="jsv/5462^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5463^"></script>11,610,900<script type="jsv/5463^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5464^"></script>40,513<script type="jsv/5464^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5465^"></script>12,153,900<script type="jsv/5465^"></script>
+            </td><td align='undefined' />
+                <span class="bold"><b><script type="jsv#5466^"></script>-543,000<script type="jsv/5466^"></script></b></span>
+            </td><td align='undefined' />
+                <span class="bold"><b><script type="jsv#5467^"></script>-4.47<script type="jsv/5467^"></script>%</b></span>
+            </td></tr><tr style='undefined'><td align='undefined' />
+                <script type="jsv#5468^"></script>16/09/2026 10:47:10<script type="jsv/5468^"></script>
+            </td><td align='center' />
+                <span class="text_c"><script type="jsv#5469^"></script>PLX<script type="jsv/5469^"></script></span>
+            </td><td align='center' />
+                <span class="text_c"><script type="jsv#5470^"></script>300<script type="jsv/5470^"></script></span>
+            </td><td align='center' />
+                <script type="jsv#5471^"></script>38,550<script type="jsv/5471^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5472^"></script>28,912<script type="jsv/5472^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5473^"></script>11,536,088<script type="jsv/5473^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5474^"></script>40,513<script type="jsv/5474^"></script>
+            </td><td align='undefined' />
+                <script type="jsv#5475^"></script>12,153,900<script type="jsv/5475^"></script>
+            </td><td align='undefined' />
+                <span class="bold"><b><script type="jsv#5476^"></script>-617,812<script type="jsv/5476^"></script></b></span>
+            </td><td align='undefined' />
+                <span class="bold"><b><script type="jsv#5477^"></script>-5.08<script type="jsv/5477^"></script>%</b></span>
+            </td></tr></table></body></html>
