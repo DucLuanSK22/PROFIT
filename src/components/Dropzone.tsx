@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { UploadCloud, FileSpreadsheet, Sparkles, AlertCircle, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { UploadCloud, FileSpreadsheet, Sparkles, AlertCircle, CheckCircle2, ShieldAlert, Trash2 } from 'lucide-react';
 import { UploadedFileInfo } from '../types/stock';
 
 interface DropzoneProps {
   onFilesDropped: (files: File[]) => void;
   onLoadSampleData?: () => void;
+  onRemoveAllFiles?: () => void;
   uploadedFiles: UploadedFileInfo[];
   duplicateCount: number;
   isLoading: boolean;
@@ -13,6 +14,7 @@ interface DropzoneProps {
 export const Dropzone: React.FC<DropzoneProps> = ({
   onFilesDropped,
   onLoadSampleData,
+  onRemoveAllFiles,
   uploadedFiles,
   duplicateCount,
   isLoading
@@ -89,7 +91,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
           <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
             <button
               type="button"
-              className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs shadow-lg shadow-blue-600/30 transition-all"
+              className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs shadow-lg shadow-blue-600/30 transition-all cursor-pointer"
             >
               Chọn file từ máy tính
             </button>
@@ -101,7 +103,7 @@ export const Dropzone: React.FC<DropzoneProps> = ({
                   e.stopPropagation();
                   onLoadSampleData();
                 }}
-                className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/30 hover:bg-emerald-600/30 text-emerald-300 font-medium text-xs transition-all"
+                className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/30 hover:bg-emerald-600/30 text-emerald-300 font-medium text-xs transition-all cursor-pointer"
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Nạp dữ liệu mẫu thực tế (6 file VPS)</span>
@@ -135,12 +137,26 @@ export const Dropzone: React.FC<DropzoneProps> = ({
             </div>
           </div>
 
-          {duplicateCount > 0 && (
-            <div className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 font-medium">
-              <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
-              <span>Đã tự động loại bỏ {duplicateCount} lệnh giao dịch trùng lặp</span>
-            </div>
-          )}
+          <div className="flex items-center space-x-2">
+            {duplicateCount > 0 && (
+              <div className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 font-medium">
+                <ShieldAlert className="w-3.5 h-3.5 text-amber-400" />
+                <span>Đã loại bỏ {duplicateCount} lệnh trùng</span>
+              </div>
+            )}
+
+            {onRemoveAllFiles && (
+              <button
+                type="button"
+                onClick={onRemoveAllFiles}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-semibold transition-all cursor-pointer"
+                title="Xóa toàn bộ các file đã nạp"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Xóa Tất Cả File</span>
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>

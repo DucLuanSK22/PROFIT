@@ -249,6 +249,24 @@ const AppContent: React.FC = () => {
     updateMultiAccountState(newState);
   };
 
+  const handleRemoveAllFiles = () => {
+    if (window.confirm(`Bạn có chắc chắn muốn xóa toàn bộ file đã nạp cho ${currentAccountData.name}?`)) {
+      const updatedAccount: AccountData = {
+        ...currentAccountData,
+        trades: [],
+        fileInfos: []
+      };
+
+      const newState: MultiAccountState = {
+        accounts: {
+          ...multiAccountState.accounts,
+          [activeAccountKey]: updatedAccount
+        }
+      };
+      updateMultiAccountState(newState);
+    }
+  };
+
   // Cash transaction handler
   const handleAddCashTxn = (newTxn: CashTransaction) => {
     const updatedCashTxns = [newTxn, ...(currentAccountData.cashTxns || [])];
@@ -326,6 +344,7 @@ const AppContent: React.FC = () => {
             <Dropzone
               onFilesDropped={handleFilesDropped}
               onLoadSampleData={handleLoadSampleData}
+              onRemoveAllFiles={handleRemoveAllFiles}
               uploadedFiles={fileInfos}
               duplicateCount={0}
               isLoading={isLoading}
@@ -333,7 +352,11 @@ const AppContent: React.FC = () => {
 
             {/* Uploaded Files List */}
             {fileInfos.length > 0 && (
-              <UploadedFilesList files={fileInfos} onRemoveFile={handleRemoveFile} />
+              <UploadedFilesList
+                files={fileInfos}
+                onRemoveFile={handleRemoveFile}
+                onRemoveAllFiles={handleRemoveAllFiles}
+              />
             )}
 
             {/* Realized P&L Stats & Charts */}

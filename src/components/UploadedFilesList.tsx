@@ -6,18 +6,29 @@ import { FileSpreadsheet, User, Calendar, Trash2 } from 'lucide-react';
 interface UploadedFilesListProps {
   files: UploadedFileInfo[];
   onRemoveFile: (fileName: string) => void;
+  onRemoveAllFiles: () => void;
 }
 
-export const UploadedFilesList: React.FC<UploadedFilesListProps> = ({ files, onRemoveFile }) => {
+export const UploadedFilesList: React.FC<UploadedFilesListProps> = ({ files, onRemoveFile, onRemoveAllFiles }) => {
   if (files.length === 0) return null;
 
   return (
-    <div className="glass-panel rounded-2xl p-5 border border-slate-800 bg-slate-900/60 space-y-3">
+    <div className="glass-panel rounded-2xl p-5 border border-slate-800 bg-slate-900/60 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-bold text-slate-200 flex items-center space-x-2">
           <FileSpreadsheet className="w-4 h-4 text-blue-400" />
           <span>Danh Sách File Đã Nạp ({files.length} file)</span>
         </h3>
+
+        {/* Delete All Files Button */}
+        <button
+          onClick={onRemoveAllFiles}
+          className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-semibold text-xs transition-all cursor-pointer"
+          title="Xóa tất cả các file đã tải lên cho tài khoản này"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+          <span>Xóa Tất Cả File</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
