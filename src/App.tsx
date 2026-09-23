@@ -12,6 +12,7 @@ import { UploadedFilesList } from './components/UploadedFilesList';
 import { CashflowModule } from './components/CashflowModule';
 import { HoldingsModule } from './components/HoldingsModule';
 import { GroupComparisonModule } from './components/GroupComparisonModule';
+import { SubAccountBreakdownTable } from './components/SubAccountBreakdownTable';
 import { parseExcelFile, mergeTrades, calculateSummaryStats, getTickerSummaries, parseHtmlXls, parseWorkbookXlsx, ParseFileResult } from './utils/excelParser';
 import { ShieldCheck, RotateCcw, AlertTriangle } from 'lucide-react';
 import * as XLSX from 'xlsx';
@@ -363,6 +364,7 @@ const AppContent: React.FC = () => {
             {trades.length > 0 && (
               <div className="space-y-8 animate-fadeIn w-full">
                 <SummaryCards stats={stats} />
+                <SubAccountBreakdownTable trades={trades} />
                 <ChartsDashboard
                   trades={trades}
                   tickerSummaries={tickerSummaries}
