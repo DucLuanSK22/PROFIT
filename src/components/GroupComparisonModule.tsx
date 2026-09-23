@@ -17,6 +17,12 @@ export const GroupComparisonModule: React.FC<GroupComparisonModuleProps> = ({ st
     const cashTxns = acc.cashTxns || [];
     const holdings = acc.holdings || [];
 
+    const stockTrades = trades.filter(t => t.assetType === 'STOCK');
+    const warrantTrades = trades.filter(t => t.assetType === 'WARRANT');
+
+    const stockRealizedProfit = stockTrades.reduce((s, t) => s + t.profit, 0);
+    const warrantRealizedProfit = warrantTrades.reduce((s, t) => s + t.profit, 0);
+
     const totalRealizedProfit = trades.reduce((s, t) => s + t.profit, 0);
     const totalCostValue = trades.reduce((s, t) => s + t.costValue, 0);
     const roiPercent = totalCostValue > 0 ? (totalRealizedProfit / totalCostValue) * 100 : 0;
@@ -37,6 +43,10 @@ export const GroupComparisonModule: React.FC<GroupComparisonModuleProps> = ({ st
       broker: acc.broker,
       accountNumber: acc.accountNumber,
       tradeCount: trades.length,
+      stockTradeCount: stockTrades.length,
+      warrantTradeCount: warrantTrades.length,
+      stockRealizedProfit,
+      warrantRealizedProfit,
       realizedProfit: totalRealizedProfit,
       roiPercent,
       winRatePercent,
@@ -52,6 +62,8 @@ export const GroupComparisonModule: React.FC<GroupComparisonModuleProps> = ({ st
   // Total Group Capital
   const groupTotalCapital = accSummaries.reduce((s, a) => s + a.netInvestedCapital, 0);
   const groupTotalProfit = accSummaries.reduce((s, a) => s + a.realizedProfit, 0);
+  const groupStockProfit = accSummaries.reduce((s, a) => s + a.stockRealizedProfit, 0);
+  const groupWarrantProfit = accSummaries.reduce((s, a) => s + a.warrantRealizedProfit, 0);
   const groupTotalHoldings = accSummaries.reduce((s, a) => s + a.holdingsValue, 0);
 
   // Chart data comparing profit & capital
@@ -71,9 +83,9 @@ export const GroupComparisonModule: React.FC<GroupComparisonModuleProps> = ({ st
             <ShieldCheck className="w-4 h-4" />
             <span>Báo Cáo Quản Trị Viên (Admin View Only)</span>
           </div>
-          <h2 className="text-2xl font-extrabold text-white font-outfit">Báo Cáo So Sánh & Báo Cáo Tổng Hợp Nhóm</h2>
+          <h2 className="text-2xl font-extrabold text-white font-outfit">Báo Cáo So Sánh & Tổng Hợp Chi Tiết Nhóm</h2>
           <p className="text-xs text-slate-300">
-            Tổng hợp dữ liệu dòng tiền, hiệu suất đầu tư và xếp hạng giữa 3 tài khoản (Tôi, Bạn A, Bạn B)
+            Tổng hợp dữ liệu dòng tiền, hiệu suất Cổ phiếu vs Chứng quyền và xếp hạng giữa các tài khoản
           </p>
         </div>
 
@@ -96,7 +108,7 @@ export const GroupComparisonModule: React.FC<GroupComparisonModuleProps> = ({ st
             <DollarSign className="w-4 h-4 text-blue-400" />
           </div>
           <div className="text-xl font-extrabold text-white font-mono">{formatVND(groupTotalCapital)}</div>
-          <div className="text-[11px] text-slate-400">Vốn thực tế gộp từ 3 tài khoản</div>
+          <div className="text-[11px] text-slate-400">Vốn thực tế gộp các tài khoản</div>
         </div>
 
         <div className="glass-panel p-5 rounded-2xl border border-slate-800 bg-slate-900/80 space-y-2">
@@ -104,7 +116,9 @@ export const GroupComparisonModule: React.FC<GroupComparisonModuleProps> = ({ st
             <span className="text-xs font-semibold text-slate-400">Tổng Lãi/Lỗ Thực Hiện Cả Nhóm</span>
             <TrendingUp className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="text-xl font-extrabold text-emerald-400 font-mono">{formatVND(groupTotalProfit)}</div>
+          <div className={`text-xl font-extrabold font-mono ${groupTotalProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+            {formatVND(groupTotalProfit)}
+          </div>
           <div className="text-[11px] text-slate-400">Lợi nhuận đã chốt lời ròng</div>
         </div>
 
@@ -118,11 +132,92 @@ export const GroupComparisonModule: React.FC<GroupComparisonModuleProps> = ({ st
         </div>
       </div>
 
+      {/* NEW: Table Phân Loại Lãi/Lỗ Cổ Phiếu vs Chứng Quyền theo Tài Khoản */}
+      <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-slate-900/90 space-y-4 shadow-xl">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-extrabold text-white flex items-center space-x-2 font-outfit">
+            <Award className="w-5 h-5 text-emerald-400" />
+            <span>BẢNG TỔNG HỢP LÃI / LỖ PHÂN LOẠI CỔ PHIẾU VS CHỨNG QUYỀN</span>
+          </h3>
+          <span className="text-xs text-slate-400 font-mono">{accSummaries.length} Tài Khoản</span>
+        </div>
+
+        <div className="overflow-x-auto rounded-xl border border-slate-800">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="bg-slate-950/80 text-slate-300 border-b border-slate-800">
+                <th className="py-3 px-4 font-bold">STT</th>
+                <th className="py-3 px-4 font-bold">TÀI KHOẢN / HỌ TÊN</th>
+                <th className="py-3 px-4 font-bold text-center">CTY CK</th>
+                <th className="py-3 px-4 font-bold text-right text-emerald-400">LÃI / LỖ CỔ PHIẾU (STOCK)</th>
+                <th className="py-3 px-4 font-bold text-right text-purple-400">LÃI / LỖ CHỨNG QUYỀN (WARRANT)</th>
+                <th className="py-3 px-4 font-bold text-right text-blue-400">TỔNG LÃI / LỖ THỰC HIỆN</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/60">
+              {accSummaries.map((acc, idx) => {
+                const isStockProfitable = acc.stockRealizedProfit >= 0;
+                const isWarrantProfitable = acc.warrantRealizedProfit >= 0;
+                const isTotalProfitable = acc.realizedProfit >= 0;
+
+                return (
+                  <tr key={acc.key} className="hover:bg-slate-800/40 transition-colors">
+                    <td className="py-3.5 px-4 font-mono font-bold text-slate-400">{idx + 1}</td>
+                    <td className="py-3.5 px-4">
+                      <div className="font-bold text-white text-sm">{acc.name}</div>
+                      <div className="text-[11px] text-slate-400 font-mono">{acc.ownerName} • {acc.accountNumber}</div>
+                    </td>
+                    <td className="py-3.5 px-4 text-center">
+                      <span className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 text-[11px] font-bold border border-slate-700">
+                        {acc.broker}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-right font-mono font-bold">
+                      <div className={isStockProfitable ? 'text-emerald-400' : 'text-red-400'}>
+                        {formatVND(acc.stockRealizedProfit)}
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-normal">({acc.stockTradeCount} lệnh)</div>
+                    </td>
+                    <td className="py-3.5 px-4 text-right font-mono font-bold">
+                      <div className={isWarrantProfitable ? 'text-purple-400' : 'text-red-400'}>
+                        {formatVND(acc.warrantRealizedProfit)}
+                      </div>
+                      <div className="text-[10px] text-slate-500 font-normal">({acc.warrantTradeCount} lệnh)</div>
+                    </td>
+                    <td className="py-3.5 px-4 text-right font-mono font-extrabold text-sm">
+                      <span className={isTotalProfitable ? 'text-emerald-400' : 'text-red-400'}>
+                        {formatVND(acc.realizedProfit)}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+            <tfoot>
+              <tr className="bg-slate-950 text-white font-bold border-t-2 border-slate-700 text-xs">
+                <td colSpan={3} className="py-3.5 px-4 text-slate-300 font-extrabold uppercase tracking-wider">
+                  TỔNG CỘNG TOÀN BỘ NHÓM
+                </td>
+                <td className={`py-3.5 px-4 text-right font-mono text-sm font-black ${groupStockProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {formatVND(groupStockProfit)}
+                </td>
+                <td className={`py-3.5 px-4 text-right font-mono text-sm font-black ${groupWarrantProfit >= 0 ? 'text-purple-400' : 'text-red-400'}`}>
+                  {formatVND(groupWarrantProfit)}
+                </td>
+                <td className={`py-3.5 px-4 text-right font-mono text-base font-black ${groupTotalProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {formatVND(groupTotalProfit)}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
       {/* Group Comparison Chart */}
       <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-slate-900/80 space-y-4">
         <h3 className="text-sm font-bold text-white flex items-center space-x-2">
           <Award className="w-4 h-4 text-amber-400" />
-          <span>Biểu Đồ So Sánh Chỉ Số Giữa 3 Tài Khoản</span>
+          <span>Biểu Đồ So Sánh Chỉ Số Giữa Các Tài Khoản</span>
         </h3>
         <div className="h-72 w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -167,7 +262,7 @@ export const GroupComparisonModule: React.FC<GroupComparisonModuleProps> = ({ st
 
               <div className="flex items-center space-x-3">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-sm bg-gradient-to-br ${
-                  acc.key === 'ACCOUNT_1' ? 'from-emerald-600 to-teal-600' : acc.key === 'ACCOUNT_2' ? 'from-purple-600 to-pink-600' : 'from-amber-600 to-orange-600'
+                  acc.key === 'ACCOUNT_1' ? 'from-emerald-600 to-teal-600' : 'from-blue-600 to-indigo-600'
                 }`}>
                   #{idx + 1}
                 </div>
@@ -179,8 +274,22 @@ export const GroupComparisonModule: React.FC<GroupComparisonModuleProps> = ({ st
 
               <div className="space-y-2.5 pt-2 border-t border-slate-800 text-xs">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">Lãi / Lỗ Đã Thực Hiện:</span>
-                  <span className={`font-mono font-bold ${isProfitable ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <span className="text-slate-400">Lãi/Lỗ Cổ Phiếu:</span>
+                  <span className={`font-mono font-bold ${acc.stockRealizedProfit >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    {formatVND(acc.stockRealizedProfit)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <span className="text-slate-400">Lãi/Lỗ Chứng Quyền:</span>
+                  <span className={`font-mono font-bold ${acc.warrantRealizedProfit >= 0 ? 'text-purple-400' : 'text-red-400'}`}>
+                    {formatVND(acc.warrantRealizedProfit)}
+                  </span>
+                </div>
+
+                <div className="flex justify-between items-center border-t border-slate-800/60 pt-1.5">
+                  <span className="text-slate-300 font-semibold">Tổng Lãi / Lỗ Thực Hiện:</span>
+                  <span className={`font-mono font-bold text-sm ${isProfitable ? 'text-emerald-400' : 'text-red-400'}`}>
                     {formatVND(acc.realizedProfit)}
                   </span>
                 </div>
