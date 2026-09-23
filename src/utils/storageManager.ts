@@ -1,7 +1,7 @@
 import { MultiAccountState, AccountKey, AccountData, TradeRecord, CashTransaction, OpenPosition } from '../types/stock';
 import { getInitialState } from './sampleDataGenerator';
 
-const STORAGE_KEY = 'INVESTMENT_DASHBOARD_3ACCOUNTS_V1';
+const STORAGE_KEY = 'INVESTMENT_DASHBOARD_1ACCOUNT_V2';
 
 export function loadMultiAccountState(): MultiAccountState {
   try {
@@ -20,12 +20,10 @@ export function loadMultiAccountState(): MultiAccountState {
           acc.fileInfos = Array.isArray(acc.fileInfos) ? acc.fileInfos : [];
         }
       });
-      // Ensure default accounts exist
-      ['ACCOUNT_1', 'ACCOUNT_2', 'ACCOUNT_3'].forEach(k => {
-        if (!parsed.accounts[k]) {
-          parsed.accounts[k] = initial.accounts[k as AccountKey];
-        }
-      });
+      // Ensure default sample account exists
+      if (!parsed.accounts.ACCOUNT_1) {
+        parsed.accounts.ACCOUNT_1 = initial.accounts.ACCOUNT_1;
+      }
       return parsed;
     }
   } catch (err) {
@@ -46,7 +44,7 @@ export function exportBackupJson(state: MultiAccountState): void {
   const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(state, null, 2));
   const downloadAnchor = document.createElement('a');
   downloadAnchor.setAttribute('href', dataStr);
-  downloadAnchor.setAttribute('download', `Backup_Dashboard_3TaiKhoan_${new Date().toISOString().slice(0, 10)}.json`);
+  downloadAnchor.setAttribute('download', `Backup_Dashboard_PROFIT_${new Date().toISOString().slice(0, 10)}.json`);
   document.body.appendChild(downloadAnchor);
   downloadAnchor.click();
   downloadAnchor.remove();
@@ -56,7 +54,7 @@ export async function importBackupJson(file: File): Promise<MultiAccountState> {
   const text = await file.text();
   const parsed = JSON.parse(text);
   if (!parsed || !parsed.accounts || !parsed.accounts.ACCOUNT_1) {
-    throw new Error('File JSON không đúng định dạng sao lưu 3 Tài Khoản');
+    throw new Error('File JSON không đúng định dạng sao lưu PROFIT Dashboard');
   }
   saveMultiAccountState(parsed);
   return parsed;
