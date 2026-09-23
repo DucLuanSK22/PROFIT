@@ -147,6 +147,7 @@ export interface ColumnIndices {
   costValIdx: number;
   profitIdx: number;
   profitPctIdx: number;
+  subAccountIdx?: number;
 }
 
 export function matchHeaderColumns(headerCells: string[]): ColumnIndices {
@@ -160,6 +161,7 @@ export function matchHeaderColumns(headerCells: string[]): ColumnIndices {
   let costValIdx = -1;
   let profitIdx = -1;
   let profitPctIdx = -1;
+  let subAccountIdx = -1;
 
   headerCells.forEach((rawCell, idx) => {
     const c = rawCell.toLowerCase().replace(/<[^>]+>/g, '').trim();
@@ -167,6 +169,10 @@ export function matchHeaderColumns(headerCells: string[]): ColumnIndices {
     // Ignore margin cash ratio columns like 'tỷ lệ tiền mặt'
     if (c.includes('tỷ lệ tiền') || c.includes('tỷ lệ margin') || c.includes('tiền mặt')) {
       return;
+    }
+
+    if (subAccountIdx === -1 && (c.includes('tiểu khoản') || c.includes('sub account') || c.includes('subaccount') || c.includes('số tk') || c.includes('tài khoản tiểu khoản'))) {
+      subAccountIdx = idx;
     }
 
     if (dateIdx === -1 && (c.includes('ngày') || c.includes('date') || c.includes('thời gian') || c.includes('time'))) {
@@ -224,7 +230,8 @@ export function matchHeaderColumns(headerCells: string[]): ColumnIndices {
     costPriceIdx,
     costValIdx,
     profitIdx,
-    profitPctIdx
+    profitPctIdx,
+    subAccountIdx: subAccountIdx !== -1 ? subAccountIdx : undefined
   };
 }
 
@@ -319,7 +326,16 @@ export function parseHtmlXls(htmlContent: string, fileName: string): ParseFileRe
 
     const { timestamp, dateFormatted, dateNormalized } = parseDateToMillis(dateRaw);
     const assetType = classifyTicker(ticker);
-    const id = generateTradeId(account, dateNormalized, ticker, sellVolume, sellPrice, costValue);
+
+    let rowAccount = account;
+    if (colMap.subAccountIdx !== undefined && cells[colMap.subAccountIdx]) {
+      const subAccCell = cleanText(cells[colMap.subAccountIdx]).replace(/'/g, '');
+      if (subAccCell && subAccCell.length >= 2) {
+        rowAccount = subAccCell;
+      }
+    }
+    const finalAccountLabel = rowAccount !== 'N/A' ? `${rowAccount} (${brokerName})` : brokerName;
+    const id = generateTradeId(rowAccount, dateNormalized, ticker, sellVolume, sellPrice, costValue);
 
     trades.push({
       id,
@@ -336,7 +352,7 @@ export function parseHtmlXls(htmlContent: string, fileName: string): ParseFileRe
       costValue,
       profit,
       profitPercent,
-      account: account !== 'N/A' ? `${account} (${brokerName})` : brokerName,
+      account: finalAccountLabel,
       sourceFile: fileName
     });
   }
@@ -382,11 +398,11 @@ export function parseWorkbookXlsx(workbook: XLSX.WorkBook, fileName: string): Pa
 
     const rowStr = row.map((cell: any) => String(cell)).join(' ');
 
-    if (rowStr.includes('Tài khoản') || rowStr.includes('Account') || rowStr.includes('Số tài khoản:')) {
-      const match = rowStr.match(/(?:LL|ll|\d{6,10}|[0-9A-Z]{8,12})\w*/);
+    if (rowStr.includes('Tài khoản') || rowStr.includes('Tiểu khoản') || rowStr.includes('Account') || rowStr.includes('Số tài khoản:')) {
+      const match = rowStr.match(/(?:LL|ll|\d{6,10}|[0-9A-Z]{6,12})[\-\w]*/);
       if (match) account = match[0];
-      if (rowStr.includes('Số tài khoản:')) {
-        const parts = rowStr.split('Số tài khoản:');
+      if (rowStr.includes('Số tài khoản:') || rowStr.includes('Tiểu khoản:')) {
+        const parts = rowStr.split(/Số tài khoản:|Tiểu khoản:/);
         if (parts[1]) account = cleanText(parts[1]).split(' ')[0];
       }
     }
@@ -447,7 +463,16 @@ export function parseWorkbookXlsx(workbook: XLSX.WorkBook, fileName: string): Pa
         if (sellVolume > 0 || sellValue > 0 || costValue > 0) {
           const { timestamp, dateFormatted, dateNormalized } = parseDateToMillis(dateRaw);
           const assetType = classifyTicker(ticker);
-          const id = generateTradeId(account, dateNormalized, ticker, sellVolume, sellPrice, costValue);
+
+          let rowAccount = account;
+          if (colMap.subAccountIdx !== undefined && row[colMap.subAccountIdx]) {
+            const subAccCell = cleanText(row[colMap.subAccountIdx]).replace(/'/g, '');
+            if (subAccCell && subAccCell.length >= 2) {
+              rowAccount = subAccCell;
+            }
+          }
+          const finalAccountLabel = rowAccount !== 'N/A' ? `${rowAccount} (${brokerName})` : brokerName;
+          const id = generateTradeId(rowAccount, dateNormalized, ticker, sellVolume, sellPrice, costValue);
 
           trades.push({
             id,
@@ -464,7 +489,7 @@ export function parseWorkbookXlsx(workbook: XLSX.WorkBook, fileName: string): Pa
             costValue,
             profit,
             profitPercent,
-            account: account !== 'N/A' ? `${account} (${brokerName})` : brokerName,
+            account: finalAccountLabel,
             sourceFile: fileName
           });
         }
