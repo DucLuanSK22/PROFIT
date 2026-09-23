@@ -9,7 +9,7 @@ interface GroupComparisonModuleProps {
 }
 
 export const GroupComparisonModule: React.FC<GroupComparisonModuleProps> = ({ state }) => {
-  const accKeys: AccountKey[] = ['ACCOUNT_1', 'ACCOUNT_2', 'ACCOUNT_3'];
+  const accKeys: AccountKey[] = Object.keys(state.accounts || {});
   
   const accSummaries = accKeys.map(key => {
     const acc = state.accounts[key];

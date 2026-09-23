@@ -139,55 +139,47 @@ export const Header: React.FC<HeaderProps> = ({
         
         {/* Account Switcher: Visible to ADMIN ONLY */}
         {isAdmin ? (
-          <div className="flex items-center space-x-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+          <div className="flex flex-wrap items-center gap-1.5 bg-slate-950 p-1 rounded-xl border border-slate-800">
             <span className="px-2 text-[11px] font-bold text-slate-400 flex items-center space-x-1">
               <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
-              <span>Admin:</span>
+              <span>Xem TK:</span>
             </span>
 
-            <button
-              onClick={() => { onSelectAccount('ACCOUNT_1'); if (activeModule === 'GROUP_SUMMARY') onSelectModule('REALIZED_PNL'); }}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                activeAccKey === 'ACCOUNT_1' && activeModule !== 'GROUP_SUMMARY'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
+            <select
+              value={activeModule === 'GROUP_SUMMARY' ? 'GROUP_SUMMARY' : activeAccKey}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === 'GROUP_SUMMARY') {
+                  onSelectModule('GROUP_SUMMARY');
+                } else {
+                  onSelectAccount(val);
+                  if (activeModule === 'GROUP_SUMMARY') {
+                    onSelectModule('REALIZED_PNL');
+                  }
+                }
+              }}
+              className="bg-slate-900 border border-slate-700 text-white font-bold text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 cursor-pointer"
             >
-              Tài Khoản 1 (Tôi)
-            </button>
-
-            <button
-              onClick={() => { onSelectAccount('ACCOUNT_2'); if (activeModule === 'GROUP_SUMMARY') onSelectModule('REALIZED_PNL'); }}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                activeAccKey === 'ACCOUNT_2' && activeModule !== 'GROUP_SUMMARY'
-                  ? 'bg-purple-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Tài Khoản 2 (Bạn A)
-            </button>
-
-            <button
-              onClick={() => { onSelectAccount('ACCOUNT_3'); if (activeModule === 'GROUP_SUMMARY') onSelectModule('REALIZED_PNL'); }}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
-                activeAccKey === 'ACCOUNT_3' && activeModule !== 'GROUP_SUMMARY'
-                  ? 'bg-amber-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              Tài Khoản 3 (Bạn B)
-            </button>
+              <option value="GROUP_SUMMARY">📊 Báo Cáo Tổng Hợp Tất Cả ({Object.keys(state.accounts || {}).length} TK)</option>
+              <optgroup label="Danh sách Tài Khoản Thành Viên">
+                {Object.values(state.accounts || {}).map((acc) => (
+                  <option key={acc.key} value={acc.key}>
+                    👤 {acc.name} ({acc.ownerName} - {acc.broker})
+                  </option>
+                ))}
+              </optgroup>
+            </select>
 
             <button
               onClick={() => onSelectModule('GROUP_SUMMARY')}
               className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                 activeModule === 'GROUP_SUMMARY'
                   ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-blue-400 hover:text-blue-300'
+                  : 'bg-slate-900 text-blue-400 hover:text-blue-300 border border-slate-800'
               }`}
             >
               <BarChart2 className="w-3.5 h-3.5" />
-              <span>Báo Cáo Tổng Hợp Nhóm</span>
+              <span className="hidden sm:inline">Tổng Hợp Group</span>
             </button>
           </div>
         ) : (
