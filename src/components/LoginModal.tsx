@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserRole, AccountKey, MultiAccountState, AuthState } from '../types/stock';
 import { verifyLogin, registerNewAccount } from '../utils/authManager';
-import { ShieldCheck, User, Users, Lock, ArrowRight, KeyRound, Sparkles, UserPlus, LogIn, Building, Hash, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, User, Users, Lock, ArrowRight, KeyRound, Sparkles, UserPlus, LogIn, Building, Hash, CheckCircle2, ShieldAlert } from 'lucide-react';
 
 interface LoginModalProps {
   state: MultiAccountState;
@@ -12,10 +12,16 @@ interface LoginModalProps {
 export const LoginModal: React.FC<LoginModalProps> = ({ state, onLoginSuccess, onStateUpdate }) => {
   const [activeTab, setActiveTab] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
 
-  // LOGIN STATE
-  const [selectedRole, setSelectedRole] = useState<UserRole>('ADMIN');
+  // PUBLIC USER PROFILES ONLY (Admin is HIDDEN from this list)
+  const allAccountKeys = Object.keys(state.accounts || {});
+  const [selectedRole, setSelectedRole] = useState<UserRole>(allAccountKeys[0] || 'ACCOUNT_1');
   const [pinInput, setPinInput] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+
+  // SECRET ADMIN LOGIN MODAL STATE
+  const [showSecretAdminModal, setShowSecretAdminModal] = useState(false);
+  const [adminPinInput, setAdminPinInput] = useState('');
+  const [adminErrorMsg, setAdminErrorMsg] = useState('');
 
   // REGISTER STATE
   const [regOwnerName, setRegOwnerName] = useState('');
@@ -27,32 +33,43 @@ export const LoginModal: React.FC<LoginModalProps> = ({ state, onLoginSuccess, o
   const [regError, setRegError] = useState('');
   const [regSuccess, setRegSuccess] = useState('');
 
-  // Dynamically map all accounts in state to profile options
-  const profiles: { role: UserRole; title: string; subtitle: string; owner: string; icon: any; color: string; defaultPin: string }[] = [
-    {
-      role: 'ADMIN',
-      title: 'Quản Trị Viên (Admin)',
-      subtitle: 'Toàn quyền chuyển đổi tất cả tài khoản & Xem báo cáo nhóm',
-      owner: 'Admin System',
-      icon: ShieldCheck,
-      color: 'from-blue-600 to-indigo-600',
-      defaultPin: '8888'
-    },
-    ...Object.values(state.accounts || {}).map((acc, idx) => ({
-      role: acc.key,
-      title: acc.name,
-      subtitle: `${acc.broker} - ${acc.accountNumber}`,
-      owner: acc.ownerName,
-      icon: idx === 0 ? User : Users,
-      color: idx === 0 ? 'from-emerald-600 to-teal-600' : idx === 1 ? 'from-purple-600 to-pink-600' : 'from-amber-600 to-orange-600',
-      defaultPin: acc.pin || '1234'
-    }))
-  ];
+  // Listen for Secret Keyboard Shortcut: Ctrl + Shift + A or Alt + A
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) || (e.altKey && (e.key === 'A' || e.key === 'a'))) {
+        e.preventDefault();
+        setShowSecretAdminModal(true);
+        setAdminErrorMsg('');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Public User Profiles ONLY (Excludes Admin so normal users do NOT see Admin)
+  const userProfiles = Object.values(state.accounts || {}).map((acc, idx) => ({
+    role: acc.key,
+    title: acc.name,
+    subtitle: `${acc.broker} - ${acc.accountNumber}`,
+    owner: acc.ownerName,
+    icon: idx === 0 ? User : Users,
+    color:
+      idx === 0
+        ? 'from-emerald-600 to-teal-600'
+        : idx === 1
+        ? 'from-purple-600 to-pink-600'
+        : idx === 2
+        ? 'from-amber-600 to-orange-600'
+        : idx === 3
+        ? 'from-blue-600 to-cyan-600'
+        : 'from-rose-600 to-pink-600',
+    defaultPin: acc.pin || '1234'
+  }));
 
   const handleSelectRole = (role: UserRole) => {
     setSelectedRole(role);
     setErrorMsg('');
-    const target = profiles.find(p => p.role === role);
+    const target = userProfiles.find(p => p.role === role);
     if (target) {
       setPinInput(target.defaultPin);
     }
@@ -66,6 +83,18 @@ export const LoginModal: React.FC<LoginModalProps> = ({ state, onLoginSuccess, o
       onLoginSuccess(res.authState);
     } else {
       setErrorMsg(res.error || 'Đăng nhập không thành công');
+    }
+  };
+
+  const handleSecretAdminSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setAdminErrorMsg('');
+    const res = verifyLogin('ADMIN', adminPinInput, state);
+    if (res.success && res.authState) {
+      setShowSecretAdminModal(false);
+      onLoginSuccess(res.authState);
+    } else {
+      setAdminErrorMsg(res.error || 'Mã PIN Admin không đúng');
     }
   };
 
@@ -101,19 +130,19 @@ export const LoginModal: React.FC<LoginModalProps> = ({ state, onLoginSuccess, o
     }
   };
 
-  const currentProfile = profiles.find(p => p.role === selectedRole) || profiles[0];
+  const currentProfile = userProfiles.find(p => p.role === selectedRole) || userProfiles[0];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
-      <div className="w-full max-w-4xl bg-slate-900/90 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden glass-panel flex flex-col my-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md overflow-y-auto">
+      <div className="w-full max-w-4xl bg-slate-900/95 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden glass-panel flex flex-col my-auto relative">
         
         {/* Top Header Mode Tabs */}
-        <div className="bg-slate-950 p-3 border-b border-slate-800 flex items-center justify-between">
+        <div className="bg-slate-950 p-3.5 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <div className="p-2 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20">
               <Sparkles className="w-4 h-4" />
             </div>
-            <span className="font-extrabold text-white text-sm tracking-wide font-outfit">SYSTEM AUTHENTICATION</span>
+            <span className="font-extrabold text-white text-sm tracking-wide font-outfit">HỆ THỐNG ĐẦU TƯ CÁ NHÂN</span>
           </div>
 
           <div className="flex items-center space-x-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-bold">
@@ -145,15 +174,15 @@ export const LoginModal: React.FC<LoginModalProps> = ({ state, onLoginSuccess, o
         {/* TAB 1: LOGIN MODE */}
         {activeTab === 'LOGIN' && (
           <div className="flex flex-col md:flex-row">
-            {/* Left Side: Role Selector */}
+            {/* Left Side: User Profiles List (5 Accounts + Registered Accounts) */}
             <div className="w-full md:w-1/2 p-6 md:p-8 border-b md:border-b-0 md:border-r border-slate-800 space-y-5">
               <div>
                 <h2 className="text-xl font-extrabold text-white font-outfit">Chọn Tài Khoản Đăng Nhập</h2>
-                <p className="text-xs text-slate-400 mt-1">Chọn vai trò tài khoản bạn muốn đăng nhập để tiếp tục</p>
+                <p className="text-xs text-slate-400 mt-1">Danh sách tài khoản thành viên trong nhóm ({userProfiles.length} tài khoản)</p>
               </div>
 
               <div className="space-y-2.5 max-h-80 overflow-y-auto pr-1">
-                {profiles.map((p) => {
+                {userProfiles.map((p) => {
                   const Icon = p.icon;
                   const isSelected = selectedRole === p.role;
 
@@ -173,12 +202,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ state, onLoginSuccess, o
                           <Icon className="w-4 h-4" />
                         </div>
                         <div>
-                          <div className="text-xs font-bold text-white flex items-center space-x-2">
-                            <span>{p.title}</span>
-                            {p.role === 'ADMIN' && (
-                              <span className="px-1.5 py-0.5 text-[9px] bg-blue-500/20 text-blue-300 rounded-md border border-blue-500/30">FULL</span>
-                            )}
-                          </div>
+                          <div className="text-xs font-bold text-white">{p.title}</div>
                           <div className="text-[11px] text-slate-400 font-mono mt-0.5">{p.subtitle}</div>
                         </div>
                       </div>
@@ -197,7 +221,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ state, onLoginSuccess, o
                     <currentProfile.icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Đang chọn đăng nhập</span>
+                    <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Đang chọn tài khoản</span>
                     <h3 className="text-sm font-bold text-white">{currentProfile.title}</h3>
                     <span className="text-xs text-slate-400">{currentProfile.owner}</span>
                   </div>
@@ -241,10 +265,19 @@ export const LoginModal: React.FC<LoginModalProps> = ({ state, onLoginSuccess, o
                 </form>
               </div>
 
-              <div className="pt-4 border-t border-slate-800 text-[11px] text-slate-500 space-y-1">
-                <p>💡 <b>Lưu ý phân quyền:</b></p>
-                <p>• <b>Admin</b>: Quản lý cả 3 tài khoản & Xem biểu đồ so sánh nhóm.</p>
-                <p>• <b>Tài khoản cá nhân</b>: Chỉ xem duy nhất dữ liệu của tài khoản đó.</p>
+              {/* Footer Note + Subtle Secret Admin Trigger Button */}
+              <div className="pt-4 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                <span>Dữ liệu bảo mật độc quyền từng tài khoản</span>
+
+                {/* Subtle Hidden Lock Icon for Admin Login Trigger */}
+                <button
+                  type="button"
+                  onClick={() => { setShowSecretAdminModal(true); setAdminErrorMsg(''); }}
+                  className="p-1 rounded-lg text-slate-700 hover:text-slate-400 hover:bg-slate-800 transition-all cursor-pointer"
+                  title="Quyền truy cập quản trị"
+                >
+                  <Lock className="w-3.5 h-3.5 opacity-60" />
+                </button>
               </div>
             </div>
           </div>
@@ -402,6 +435,78 @@ export const LoginModal: React.FC<LoginModalProps> = ({ state, onLoginSuccess, o
         )}
 
       </div>
+
+      {/* SECRET ADMIN LOGIN MODAL OVERLAY (Only opens via secret lock button or Ctrl+Shift+A) */}
+      {showSecretAdminModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md">
+          <div className="w-full max-w-md bg-slate-900 border border-blue-500/40 rounded-3xl shadow-2xl p-6 space-y-5">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div className="flex items-center space-x-2">
+                <div className="p-2 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white">Xác Nhận Quyền Admin</h3>
+                  <p className="text-[11px] text-slate-400">Nhập mã PIN Quản Trị Viên để tiếp tục</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowSecretAdminModal(false)}
+                className="text-slate-400 hover:text-white text-xs px-2 py-1 bg-slate-800 rounded-lg cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleSecretAdminSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1.5 flex items-center justify-between">
+                  <span className="flex items-center space-x-1">
+                    <KeyRound className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Mã PIN Quản Trị (Admin)</span>
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-mono">Mặc định: 8888</span>
+                </label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3.5" />
+                  <input
+                    type="password"
+                    maxLength={10}
+                    autoFocus
+                    value={adminPinInput}
+                    onChange={(e) => setAdminPinInput(e.target.value)}
+                    placeholder="Nhập mã PIN Admin..."
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-100 font-mono text-sm focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+              </div>
+
+              {adminErrorMsg && (
+                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold">
+                  {adminErrorMsg}
+                </div>
+              )}
+
+              <div className="flex items-center justify-end space-x-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowSecretAdminModal(false)}
+                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold cursor-pointer"
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-lg shadow-blue-600/20 cursor-pointer flex items-center space-x-1.5"
+                >
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Đăng Nhập Admin</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

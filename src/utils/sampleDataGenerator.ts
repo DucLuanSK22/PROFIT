@@ -2,7 +2,7 @@ import { MultiAccountState, AccountData, TradeRecord, CashTransaction, OpenPosit
 
 export const ADMIN_PIN = '8888';
 
-export const DEFAULT_ACCOUNTS: Record<'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3', AccountData> = {
+export const DEFAULT_ACCOUNTS: Record<'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3' | 'ACCOUNT_4' | 'ACCOUNT_5', AccountData> = {
   ACCOUNT_1: {
     key: 'ACCOUNT_1',
     name: 'Tài Khoản 1 (Của Tôi)',
@@ -111,15 +111,6 @@ export const DEFAULT_ACCOUNTS: Record<'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3', A
         amount: 20000000,
         note: 'Rút lợi nhuận',
         sourceFile: 'SaoKeTien_VPS.xlsx'
-      },
-      {
-        id: 'acc1_c4',
-        date: '10/09/2026',
-        timestamp: new Date('2026-09-10').getTime(),
-        type: 'MARGIN_INTEREST',
-        amount: 350000,
-        note: 'Lãi vay margin tháng 8',
-        sourceFile: 'SaoKeTien_VPS.xlsx'
       }
     ],
     holdings: [
@@ -146,18 +137,6 @@ export const DEFAULT_ACCOUNTS: Record<'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3', A
         currentMarketValue: 69000000,
         unrealizedProfit: 6500000,
         unrealizedProfitPercent: 10.4
-      },
-      {
-        id: 'acc1_h3',
-        ticker: 'CHPG2607',
-        assetType: 'WARRANT',
-        volume: 5000,
-        avgCostPrice: 1500,
-        currentPrice: 1820,
-        totalCostValue: 7500000,
-        currentMarketValue: 9100000,
-        unrealizedProfit: 1600000,
-        unrealizedProfitPercent: 21.333
       }
     ],
     fileInfos: [
@@ -216,24 +195,6 @@ export const DEFAULT_ACCOUNTS: Record<'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3', A
         profitPercent: -5.744,
         account: '889012 (DNSE)',
         sourceFile: 'KH - LS lãi lỗ (21).xlsx'
-      },
-      {
-        id: 'acc2_t3',
-        date: '19/09/2026 09:30:00',
-        timestamp: new Date('2026-09-19T09:30:00').getTime(),
-        dateFormatted: '2026-09-19',
-        ticker: 'CMBB2505',
-        assetType: 'WARRANT',
-        sellVolume: 8000,
-        sellPrice: 1400,
-        feeAndTax: 33600,
-        sellValue: 11200000,
-        costPrice: 900,
-        costValue: 7200000,
-        profit: 3966400,
-        profitPercent: 55.088,
-        account: '889012 (DNSE)',
-        sourceFile: 'KH - LS lãi lỗ (21).xlsx'
       }
     ],
     cashTxns: [
@@ -243,7 +204,7 @@ export const DEFAULT_ACCOUNTS: Record<'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3', A
         timestamp: new Date('2026-08-05').getTime(),
         type: 'DEPOSIT',
         amount: 120000000,
-        note: 'Nạp vốn nạp ban đầu Entrade X',
+        note: 'Nạp vốn Entrade X',
         sourceFile: 'EntradeX_Statement.xlsx'
       }
     ],
@@ -259,18 +220,6 @@ export const DEFAULT_ACCOUNTS: Record<'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3', A
         currentMarketValue: 75600000,
         unrealizedProfit: 5100000,
         unrealizedProfitPercent: 7.234
-      },
-      {
-        id: 'acc2_h2',
-        ticker: 'CMWW2502',
-        assetType: 'WARRANT',
-        volume: 4000,
-        avgCostPrice: 2100,
-        currentPrice: 2450,
-        totalCostValue: 8400000,
-        currentMarketValue: 9800000,
-        unrealizedProfit: 1400000,
-        unrealizedProfitPercent: 16.667
       }
     ],
     fileInfos: [
@@ -280,8 +229,8 @@ export const DEFAULT_ACCOUNTS: Record<'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3', A
         nameOwner: 'Trần Thị B',
         fromDate: '01/08/2026',
         toDate: '20/09/2026',
-        tradeCount: 3,
-        totalProfit: 5766400
+        tradeCount: 2,
+        totalProfit: 1800000
       }
     ]
   },
@@ -311,24 +260,6 @@ export const DEFAULT_ACCOUNTS: Record<'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3', A
         profitPercent: 9.458,
         account: '105C778 (TCBS)',
         sourceFile: 'TCBS_Realized_PL.xlsx'
-      },
-      {
-        id: 'acc3_t2',
-        date: '17/09/2026 10:45:00',
-        timestamp: new Date('2026-09-17T10:45:00').getTime(),
-        dateFormatted: '2026-09-17',
-        ticker: 'VCB',
-        assetType: 'STOCK',
-        sellVolume: 500,
-        sellPrice: 91000,
-        feeAndTax: 91000,
-        sellValue: 45500000,
-        costPrice: 88000,
-        costValue: 44000000,
-        profit: 1409000,
-        profitPercent: 3.202,
-        account: '105C778 (TCBS)',
-        sourceFile: 'TCBS_Realized_PL.xlsx'
       }
     ],
     cashTxns: [
@@ -339,15 +270,6 @@ export const DEFAULT_ACCOUNTS: Record<'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3', A
         type: 'DEPOSIT',
         amount: 150000000,
         note: 'Nạp vốn TCBS iWealth',
-        sourceFile: 'TCBS_Cashflow.xlsx'
-      },
-      {
-        id: 'acc3_c2',
-        date: '02/09/2026',
-        timestamp: new Date('2026-09-02').getTime(),
-        type: 'WITHDRAWAL',
-        amount: 30000000,
-        note: 'Rút tiền mua sắm',
         sourceFile: 'TCBS_Cashflow.xlsx'
       }
     ],
@@ -363,18 +285,6 @@ export const DEFAULT_ACCOUNTS: Record<'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3', A
         currentMarketValue: 68250000,
         unrealizedProfit: 5250000,
         unrealizedProfitPercent: 8.333
-      },
-      {
-        id: 'acc3_h2',
-        ticker: 'MSN',
-        assetType: 'STOCK',
-        volume: 1000,
-        avgCostPrice: 75000,
-        currentPrice: 78200,
-        totalCostValue: 75000000,
-        currentMarketValue: 78200000,
-        unrealizedProfit: 3200000,
-        unrealizedProfitPercent: 4.267
       }
     ],
     fileInfos: [
@@ -384,8 +294,138 @@ export const DEFAULT_ACCOUNTS: Record<'ACCOUNT_1' | 'ACCOUNT_2' | 'ACCOUNT_3', A
         nameOwner: 'Lê Văn C',
         fromDate: '01/08/2026',
         toDate: '20/09/2026',
-        tradeCount: 2,
-        totalProfit: 7273000
+        tradeCount: 1,
+        totalProfit: 5864000
+      }
+    ]
+  },
+
+  ACCOUNT_4: {
+    key: 'ACCOUNT_4',
+    name: 'Tài Khoản 4 (Bạn C)',
+    ownerName: 'Phạm Văn D',
+    accountNumber: '003C889 (SSI)',
+    broker: 'SSI',
+    pin: '4444',
+    trades: [
+      {
+        id: 'acc4_t1',
+        date: '15/09/2026 09:45:00',
+        timestamp: new Date('2026-09-15T09:45:00').getTime(),
+        dateFormatted: '2026-09-15',
+        ticker: 'VNM',
+        assetType: 'STOCK',
+        sellVolume: 1000,
+        sellPrice: 72000,
+        feeAndTax: 144000,
+        sellValue: 72000000,
+        costPrice: 68000,
+        costValue: 68000000,
+        profit: 3856000,
+        profitPercent: 5.67,
+        account: '003C889 (SSI)',
+        sourceFile: 'SSI_BaoCao.xlsx'
+      }
+    ],
+    cashTxns: [
+      {
+        id: 'acc4_c1',
+        date: '12/08/2026',
+        timestamp: new Date('2026-08-12').getTime(),
+        type: 'DEPOSIT',
+        amount: 80000000,
+        note: 'Nạp vốn SSI Web Trading',
+        sourceFile: 'SSI_Cash.xlsx'
+      }
+    ],
+    holdings: [
+      {
+        id: 'acc4_h1',
+        ticker: 'REE',
+        assetType: 'STOCK',
+        volume: 1000,
+        avgCostPrice: 62000,
+        currentPrice: 66500,
+        totalCostValue: 62000000,
+        currentMarketValue: 66500000,
+        unrealizedProfit: 4500000,
+        unrealizedProfitPercent: 7.258
+      }
+    ],
+    fileInfos: [
+      {
+        fileName: 'SSI_BaoCao.xlsx',
+        account: '003C889 (SSI)',
+        nameOwner: 'Phạm Văn D',
+        fromDate: '01/08/2026',
+        toDate: '20/09/2026',
+        tradeCount: 1,
+        totalProfit: 3856000
+      }
+    ]
+  },
+
+  ACCOUNT_5: {
+    key: 'ACCOUNT_5',
+    name: 'Tài Khoản 5 (Bạn D)',
+    ownerName: 'Hoàng Thị E',
+    accountNumber: '011C990 (HSC)',
+    broker: 'HSC',
+    pin: '5555',
+    trades: [
+      {
+        id: 'acc5_t1',
+        date: '18/09/2026 13:50:00',
+        timestamp: new Date('2026-09-18T13:50:00').getTime(),
+        dateFormatted: '2026-09-18',
+        ticker: 'DGC',
+        assetType: 'STOCK',
+        sellVolume: 500,
+        sellPrice: 115000,
+        feeAndTax: 115000,
+        sellValue: 57500000,
+        costPrice: 102000,
+        costValue: 51000000,
+        profit: 6385000,
+        profitPercent: 12.52,
+        account: '011C990 (HSC)',
+        sourceFile: 'HSC_myInvestor.xlsx'
+      }
+    ],
+    cashTxns: [
+      {
+        id: 'acc5_c1',
+        date: '15/08/2026',
+        timestamp: new Date('2026-08-15').getTime(),
+        type: 'DEPOSIT',
+        amount: 90000000,
+        note: 'Nạp vốn HSC myInvestor',
+        sourceFile: 'HSC_Cash.xlsx'
+      }
+    ],
+    holdings: [
+      {
+        id: 'acc5_h1',
+        ticker: 'PNJ',
+        assetType: 'STOCK',
+        volume: 800,
+        avgCostPrice: 95000,
+        currentPrice: 102000,
+        totalCostValue: 76000000,
+        currentMarketValue: 81600000,
+        unrealizedProfit: 5600000,
+        unrealizedProfitPercent: 7.368
+      }
+    ],
+    fileInfos: [
+      {
+        fileName: 'HSC_myInvestor.xlsx',
+        account: '011C990 (HSC)',
+        nameOwner: 'Hoàng Thị E',
+        fromDate: '01/08/2026',
+        toDate: '20/09/2026',
+        tradeCount: 1,
+        totalProfit: 6385000
       }
     ]
   }
